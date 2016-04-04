@@ -74,11 +74,17 @@ if __name__ == '__main__':
         destport = temp[6]
         if (ttl < 1):
             print (src + "->" + dest + " discarded (TTL expired)")
+        temp = dest[0][:-2].split(".")
+        tempstring = ''
+        for value in temp:
+            binarystring = "{0:b}".format(int(value))
+            while(len(binarystring) != 4):
+                binarystring = "0" + binarystring
+            tempstring = tempstring + binarystring
         a = root
         while (a):
-                #
-                #choose a direction
-                #iterate until
+            #choose a direction
+            #iterate until
             print "asdf"
             a = a.left
 
