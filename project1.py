@@ -65,16 +65,15 @@ if __name__ == '__main__':
         print temp
         if (len(temp) != 7):
             break
-        interface = inp[0]
-        src = inp[1]
-        dest = inp[2]
-        protocol = inp[3]
-        ttl = int(inp[4])
-        srcport = inp[5]
-        destport = inp[6]
+        interface = temp[0]
+        src = temp[1]
+        dest = temp[2]
+        protocol = temp[3]
+        ttl = int(temp[4])
+        srcport = temp[5]
+        destport = temp[6]
         if (ttl < 1):
             print (src + "->" + dest + " discarded (TTL expired)")
-        print(src)
         a = root
         while (a):
                 #
