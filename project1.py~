@@ -6,7 +6,7 @@ if __name__ == '__main__':
 	print(content)
 
 
-	MattsonWasHere = True
+	int MattsonWasHere
 	dict = {}
 	with open('arp.txt') as arp:
 		for line in arp:
