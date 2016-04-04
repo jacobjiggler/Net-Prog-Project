@@ -4,20 +4,50 @@ class Node(object):
     def __init__(self):
         self.left = None
         self.right = None
-        self.data = None
+        self.destination = None
+        self.gateway = None
+        self.interface = None
 
 if __name__ == '__main__':
     with open('routes.txt') as r:
         routeslines = r.readlines()
 
     routes = []
+    routesbinary = []
     for line in routeslines:
         routes.append(line.split())
 
     root = Node()
-    for idx, val in enumerate(routes):
-        if(val[2] == 'eth0'):
-            print "Hello"
+    cNode = root
+    temp = []
+    for val in routes:
+        temp = val[0][:-2].split(".")
+        tempstring = ''
+        for value in temp:
+            binarystring = "{0:b}".format(int(value))
+            while(len(binarystring) != 4):
+                binarystring = "0" + binarystring
+            tempstring = tempstring + binarystring
+
+            for i in tempstring:
+                if(i == '0'):
+                    if(cNode.left == None):
+                        cNode.left = Node()
+                        cNode.left.destination = val[0]
+                        cNode.left.gateway = val[1]
+                        cNode.left.interface = val[2]
+                    else:
+                        cNode = cNode.left
+                else:
+                    if(cNode.right == None):
+                        cNode.right = Node()
+                        cNode.right.destination = val[0]
+                        cNode.right.gateway = val[1]
+                        cNode.right.interface = val[2]
+                        break
+                    else:
+                        cNode = cNode.right
+
 
     dict = {}
     with open('arp.txt') as arp:
