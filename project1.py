@@ -21,7 +21,8 @@ if __name__ == '__main__':
     cNode = root
     temp = []
     for val in routes:
-        temp = val[0][:-2].split(".")
+        temp = val[0].split("/")
+        temp = temp[0].split(".")
         tempstring = ''
         for value in temp:
             binarystring = "{0:b}".format(int(value))
@@ -29,25 +30,25 @@ if __name__ == '__main__':
                 binarystring = "0" + binarystring
             tempstring = tempstring + binarystring
 
-            for i in tempstring:
-                if(i == '0'):
-                    if(cNode.left == None):
-                        cNode.left = Node()
-                        cNode.left.destination = val[0]
-                        cNode.left.gateway = val[1]
-                        cNode.left.interface = val[2]
-                    else:
-                        cNode = cNode.left
+        for i in tempstring:
+            if(i == '0'):
+                if(cNode.left == None):
+                    cNode.left = Node()
+                    cNode.left.destination = val[0]
+                    cNode.left.gateway = val[1]
+                    cNode.left.interface = val[2]
+                    break
                 else:
-                    if(cNode.right == None):
-                        cNode.right = Node()
-                        cNode.right.destination = val[0]
-                        cNode.right.gateway = val[1]
-                        cNode.right.interface = val[2]
-                        break
-                    else:
-                        cNode = cNode.right
-
+                    cNode = cNode.left
+            else:
+                if(cNode.right == None):
+                    cNode.right = Node()
+                    cNode.right.destination = val[0]
+                    cNode.right.gateway = val[1]
+                    cNode.right.interface = val[2]
+                    break
+                else:
+                    cNode = cNode.right
 
     dict = {}
     with open('arp.txt') as arp:
@@ -79,7 +80,7 @@ if __name__ == '__main__':
                 #
                 #choose a direction
                 #iterate until
-            print "asdf"
+            print a.destination
             a = a.left
 
         if inp == "":       # If it is a blank line...
