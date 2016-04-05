@@ -94,11 +94,11 @@ if __name__ == '__main__':
                     cNode = cNode.right
         #if direct point to point
         if (cNode.gateway == "0.0.0.0" and cNode.destination.split("/")[1] == 32):
-                #arp lookup
-                if (arp[dest]):
-                    print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
-                else:
-                    print (src + "->" + dest + " discarded (destination unreachable)")
-        else:
             #routing table lookup
             print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface  +") ttl " + str(ttl - 1))
+        else:
+            #arp lookup
+            if (arp[dest]):
+                print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
+            else:
+                print (src + "->" + dest + " discarded (destination unreachable)")
