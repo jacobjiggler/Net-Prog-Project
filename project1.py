@@ -111,16 +111,16 @@ if __name__ == '__main__':
             if (local(src)):
                 if (nat[cNode.interface]):
                 #record #wrong
-                current_nat[nat[cNode.interface]] = src
+                current_nat[nat[cNode.interface]+":"+cNode.destport] = src
                 print current_nat[nat[cNode.interface]]
                 #convert to local
                 src = nat[cNode.interface]
                 else:
                     break
             #if incoming
-            elif (current_nat[dest]):
+            elif (current_nat[dest+":"+cNode.srcport]):
                 #reverse transmission
-                dest = current_nat[dest]
+                dest = current_nat[dest+":"+cNode.srcport]
 
             #routing table lookup
             print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface  +") ttl " + str(ttl - 1))
