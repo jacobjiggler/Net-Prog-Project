@@ -60,6 +60,11 @@ if __name__ == '__main__':
     with open('arp.txt') as arptxt:
         for line in arptxt:
             arp[line.split(" ")[0]] = line.split(" ")[1]
+    nat = {}
+    current_nat = {}
+    with open('nat.txt') as nattxt:
+        for line in nattxt:
+            nat[line.split(" ")[0]] = line.split(" ")[1]
 
     while True:
         inp = raw_input("Enter PDU: \n")   # Get the input
@@ -86,7 +91,7 @@ if __name__ == '__main__':
             while(len(binarystring) != 4):
                 binarystring = "0" + binarystring
             tempstring = tempstring + binarystring
-        cnode = root
+        cNode = root
         for i in tempstring:
             if(i == '0'):
                 if(cNode.left == None):
@@ -98,8 +103,25 @@ if __name__ == '__main__':
                     break
                 else:
                     cNode = cNode.right
+
+
         #if direct point to point
         if (cNode.gateway == "0.0.0.0" and cNode.destination.split("/")[1] == 32):
+            #if outgoing
+            if (local(src)):
+                if (nat[cNode.interface]):
+                #record #wrong
+                current_nat[nat[cNode.interface]] = src
+                print current_nat[nat[cNode.interface]]
+                #convert to local
+                src = nat[cNode.interface]
+                else:
+                    break
+            #if incoming
+            elif (current_nat[dest]):
+                #reverse transmission
+                dest = current_nat[dest]
+
             #routing table lookup
             print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface  +") ttl " + str(ttl - 1))
         else:
