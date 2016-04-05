@@ -8,6 +8,12 @@ class Node(object):
         self.gateway = None
         self.interface = None
 
+def local(ip):
+    if(ip[0:7] == "192.168"):
+        return True
+    else:
+        return False
+
 if __name__ == '__main__':
     with open('routes.txt') as r:
         routeslines = r.readlines()
