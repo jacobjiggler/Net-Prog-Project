@@ -116,6 +116,7 @@ if __name__ == '__main__':
                 #convert to local
                 src = nat[cNode.interface]
                 else:
+                    print "No corresponding NAT reference. WTF?"
                     break
             #if incoming
             elif (current_nat[dest+":"+cNode.srcport]):
