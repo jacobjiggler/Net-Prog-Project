@@ -70,7 +70,7 @@ if __name__ == '__main__':
         ttl = int(temp[4])
         srcport = temp[5]
         destport = temp[6]
-        if (ttl < 1):
+        if (ttl <= 1):
             print (src + "->" + dest + " discarded (TTL expired)")
         tempstring = ''
         temp = dest[0].split("/")
