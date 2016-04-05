@@ -8,12 +8,6 @@ class Node(object):
         self.gateway = None
         self.interface = None
 
-def local(ip):
-    if(ip[0:7] == "192.168"):
-        return True
-    else:
-        return False
-
 if __name__ == '__main__':
     with open('routes.txt') as r:
         routeslines = r.readlines()
@@ -32,7 +26,7 @@ if __name__ == '__main__':
         tempstring = ''
         for value in temp:
             binarystring = "{0:b}".format(int(value))
-            while(len(binarystring) != 4):
+            while(len(binarystring) < 4):
                 binarystring = "0" + binarystring
             tempstring = tempstring + binarystring
 
@@ -60,11 +54,6 @@ if __name__ == '__main__':
     with open('arp.txt') as arptxt:
         for line in arptxt:
             arp[line.split(" ")[0]] = line.split(" ")[1]
-    nat = {}
-    current_nat = {}
-    with open('nat.txt') as nattxt:
-        for line in nattxt:
-            nat[line.split(" ")[0]] = line.split(" ")[1]
 
     while True:
         inp = raw_input("Enter PDU: \n")   # Get the input
@@ -89,7 +78,7 @@ if __name__ == '__main__':
             temp = temp[0].split(".")
             for value in temp:
                 binarystring = "{0:b}".format(int(value))
-                while(len(binarystring) != 4):
+                while(len(binarystring) < 4):
                     binarystring = "0" + binarystring
                 tempstring = tempstring + binarystring
             cNode = root
@@ -108,27 +97,12 @@ if __name__ == '__main__':
 
             #if direct point to point
             if (cNode.gateway == "0.0.0.0" and cNode.destination.split("/")[1] == 32):
-                #if outgoing
-                if (local(src)):
-                    if (nat[cNode.interface]):
-                        #record #wrong
-                        current_nat[nat[cNode.interface]+":"+cNode.destport] = src
-                        print current_nat[nat[cNode.interface]]
-                        #convert to local
-                        src = nat[cNode.interface]
-                    else:
-                        print "No corresponding NAT reference. WTF?"
-                        break
-                #if incoming
-                elif (current_nat[dest+":"+cNode.srcport]):
-                    #reverse transmission
-                    dest = current_nat[dest+":"+cNode.srcport]
-
                 #routing table lookup
                 print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface  +") ttl " + str(ttl - 1))
             else:
+                #this is wrong
                 #arp lookup
-                if (arp[dest]):
+                if (arp.get(dest)):
                     print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
                 else:
                     print (src + "->" + dest + " discarded (destination unreachable)")
