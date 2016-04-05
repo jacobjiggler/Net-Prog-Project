@@ -82,52 +82,53 @@ if __name__ == '__main__':
         srcport = temp[5]
         destport = temp[6]
         if (ttl <= 1):
-            print (src + "->" + dest + " discarded (TTL expired)")
-        tempstring = ''
-        temp = dest[0].split("/")
-        temp = temp[0].split(".")
-        for value in temp:
-            binarystring = "{0:b}".format(int(value))
-            while(len(binarystring) != 4):
-                binarystring = "0" + binarystring
-            tempstring = tempstring + binarystring
-        cNode = root
-        for i in tempstring:
-            if(i == '0'):
-                if(cNode.left == None):
-                    break
-                else:
-                    cNode = cNode.left
-            else:
-                if(cNode.right == None):
-                    break
-                else:
-                    cNode = cNode.right
-
-
-        #if direct point to point
-        if (cNode.gateway == "0.0.0.0" and cNode.destination.split("/")[1] == 32):
-            #if outgoing
-            if (local(src)):
-                if (nat[cNode.interface]):
-                #record #wrong
-                current_nat[nat[cNode.interface]+":"+cNode.destport] = src
-                print current_nat[nat[cNode.interface]]
-                #convert to local
-                src = nat[cNode.interface]
-                else:
-                    print "No corresponding NAT reference. WTF?"
-                    break
-            #if incoming
-            elif (current_nat[dest+":"+cNode.srcport]):
-                #reverse transmission
-                dest = current_nat[dest+":"+cNode.srcport]
-
-            #routing table lookup
-            print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface  +") ttl " + str(ttl - 1))
+            print (src + ":" + srcport + "->" + dest + ":" + destport + " discarded (TTL expired)")
         else:
-            #arp lookup
-            if (arp[dest]):
-                print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
+            tempstring = ''
+            temp = dest[0].split("/")
+            temp = temp[0].split(".")
+            for value in temp:
+                binarystring = "{0:b}".format(int(value))
+                while(len(binarystring) != 4):
+                    binarystring = "0" + binarystring
+                tempstring = tempstring + binarystring
+            cNode = root
+            for i in tempstring:
+                if(i == '0'):
+                    if(cNode.left == None):
+                        break
+                    else:
+                        cNode = cNode.left
+                else:
+                    if(cNode.right == None):
+                        break
+                    else:
+                        cNode = cNode.right
+
+
+            #if direct point to point
+            if (cNode.gateway == "0.0.0.0" and cNode.destination.split("/")[1] == 32):
+                #if outgoing
+                if (local(src)):
+                    if (nat[cNode.interface]):
+                        #record #wrong
+                        current_nat[nat[cNode.interface]+":"+cNode.destport] = src
+                        print current_nat[nat[cNode.interface]]
+                        #convert to local
+                        src = nat[cNode.interface]
+                    else:
+                        print "No corresponding NAT reference. WTF?"
+                        break
+                #if incoming
+                elif (current_nat[dest+":"+cNode.srcport]):
+                    #reverse transmission
+                    dest = current_nat[dest+":"+cNode.srcport]
+
+                #routing table lookup
+                print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface  +") ttl " + str(ttl - 1))
             else:
-                print (src + "->" + dest + " discarded (destination unreachable)")
+                #arp lookup
+                if (arp[dest]):
+                    print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
+                else:
+                    print (src + "->" + dest + " discarded (destination unreachable)")
