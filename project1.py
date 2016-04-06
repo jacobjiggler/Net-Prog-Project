@@ -90,28 +90,28 @@ if __name__ == '__main__':
             cNode = root
             for i in tempstring:
                 if(i == '0'):
-                    print "left"
                     if(cNode.left == None):
                         break
                     else:
                         cNode = cNode.left
                 else:
-                    print "right"
                     if(cNode.right == None):
                         break
                     else:
                         cNode = cNode.right
 
 
-            #if direct point to point
-            if (cNode.gateway == "0.0.0.0"):
-                #routing table lookup
-                print (src + ":" + srcport + "->" + dest + ":" + destport + " directly connected " + "(" + cNode.interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
+            if(cNode.gateway == None):
+                print (src + "->" + dest + " discarded (destination unreachable)")
             else:
-                #this is wrong
-                #arp lookup
-                print cNode.gateway
-                if (arp.get(cNode.gateway)):
-                    print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[cNode.gateway] +") ttl " + str(ttl - 1))
+                #if direct point to point
+                if (cNode.gateway == "0.0.0.0"):
+                    #routing table lookup
+                    print (src + ":" + srcport + "->" + dest + ":" + destport + " directly connected " + "(" + cNode.interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
                 else:
-                    print (src + "->" + dest + " discarded (destination unreachable)")
+                    #arp lookup
+                    if (arp.get(cNode.gateway)):
+                        print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[cNode.gateway] +") ttl " + str(ttl - 1))
+                    else:
+                         print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + ") ttl " + str(ttl - 1))                    
+
