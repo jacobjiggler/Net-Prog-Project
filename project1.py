@@ -23,6 +23,7 @@ if __name__ == '__main__':
     for val in routes:
         cNode = root
         temp = val[0].split("/")
+        depth = int(temp[1])
         temp = temp[0].split(".")
         tempstring = ''
         for value in temp:
@@ -30,27 +31,27 @@ if __name__ == '__main__':
             while(len(binarystring) != 8):
                 binarystring = "0" + binarystring
             tempstring = tempstring + binarystring
-        #print tempstring
 
+        count = 1
         for i in tempstring:
             if(i == '0'):
                 if(cNode.left == None):
                     cNode.left = Node()
-                    cNode.left.destination = val[0]
-                    cNode.left.gateway = val[1]
-                    cNode.left.interface = val[2]
-                    break
-                else:
-                    cNode = cNode.left
+
+                cNode = cNode.left
             else:
                 if(cNode.right == None):
                     cNode.right = Node()
-                    cNode.right.destination = val[0]
-                    cNode.right.gateway = val[1]
-                    cNode.right.interface = val[2]
-                    break
-                else:
-                    cNode = cNode.right
+
+                cNode = cNode.right
+            if(count == depth):
+                break
+            count = count + 1
+
+        cNode.destination = val[0]
+        cNode.gateway = val[1]
+        cNode.interface = val[2]
+
 
     arp = {}
     with open('arp.txt') as arptxt:
@@ -79,13 +80,13 @@ if __name__ == '__main__':
             print (src + ":" + srcport + "->" + dest + ":" + destport + " discarded (TTL expired)")
         else:
             tempstring = ''
-            temp = dest[0].split("/")
-            temp = temp[0].split(".")
+            temp = dest.split(".")
             for value in temp:
                 binarystring = "{0:b}".format(int(value))
                 while(len(binarystring) != 8):
                     binarystring = "0" + binarystring
                 tempstring = tempstring + binarystring
+
             cNode = root
             for i in tempstring:
                 if(i == '0'):
@@ -103,12 +104,13 @@ if __name__ == '__main__':
 
 
             #if direct point to point
-            if (cNode.gateway == "0.0.0.0" and cNode.destination.split("/")[1] == 32):
+            if (cNode.gateway == "0.0.0.0"):
                 #routing table lookup
                 print (src + ":" + srcport + "->" + dest + ":" + destport + " directly connected " + "(" + cNode.interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
             else:
                 #this is wrong
                 #arp lookup
+                print cNode.gateway
                 if (arp.get(cNode.gateway)):
                     print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[cNode.gateway] +") ttl " + str(ttl - 1))
                 else:
