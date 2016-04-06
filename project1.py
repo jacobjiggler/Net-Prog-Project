@@ -4,6 +4,7 @@ class Node(object):
     def __init__(self):
         self.left = None
         self.right = None
+        self.parent = None
         self.destination = None
         self.gateway = None
         self.interface = None
@@ -37,11 +38,15 @@ if __name__ == '__main__':
             if(i == '0'):
                 if(cNode.left == None):
                     cNode.left = Node()
+                    cNode.left.parent = cNode
+
 
                 cNode = cNode.left
+                
             else:
                 if(cNode.right == None):
                     cNode.right = Node()
+                    cNode.right.parent = cNode
 
                 cNode = cNode.right
             if(count == depth):
@@ -103,6 +108,10 @@ if __name__ == '__main__':
 
             if(cNode.gateway == None):
                 print (src + "->" + dest + " discarded (destination unreachable)")
+                while(cNode.gateway == None):
+                    cNode = cNode.parent
+
+                print cNode.destination + "   " + cNode.gateway + "   " + cNode.interface
             else:
                 #if direct point to point
                 if (cNode.gateway == "0.0.0.0"):
