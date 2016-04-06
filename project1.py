@@ -16,19 +16,21 @@ if __name__ == '__main__':
     routesbinary = []
     for line in routeslines:
         routes.append(line.split())
-
+    routes = filter(None, routes)
     root = Node()
     cNode = root
     temp = []
     for val in routes:
+        cNode = root
         temp = val[0].split("/")
         temp = temp[0].split(".")
         tempstring = ''
         for value in temp:
             binarystring = "{0:b}".format(int(value))
-            while(len(binarystring) < 4):
+            while(len(binarystring) != 8):
                 binarystring = "0" + binarystring
             tempstring = tempstring + binarystring
+        #print tempstring
 
         for i in tempstring:
             if(i == '0'):
@@ -53,13 +55,16 @@ if __name__ == '__main__':
     arp = {}
     with open('arp.txt') as arptxt:
         for line in arptxt:
-            arp[line.split(" ")[0]] = line.split(" ")[1]
+            arpline = line.split(" ")
+            arpline = filter(None, arpline)
+            arp[arpline[0]] = arpline[1]
 
     while True:
         inp = raw_input("Enter PDU: \n")   # Get the input
         if inp == "":       # If it is a blank line...
             break           # ...break the loop
         temp = inp.split(" ")
+        temp = filter(None, temp)
         print temp
         if (len(temp) != 7):
             break
@@ -78,17 +83,19 @@ if __name__ == '__main__':
             temp = temp[0].split(".")
             for value in temp:
                 binarystring = "{0:b}".format(int(value))
-                while(len(binarystring) < 4):
+                while(len(binarystring) != 8):
                     binarystring = "0" + binarystring
                 tempstring = tempstring + binarystring
             cNode = root
             for i in tempstring:
                 if(i == '0'):
+                    print "left"
                     if(cNode.left == None):
                         break
                     else:
                         cNode = cNode.left
                 else:
+                    print "right"
                     if(cNode.right == None):
                         break
                     else:
@@ -98,11 +105,11 @@ if __name__ == '__main__':
             #if direct point to point
             if (cNode.gateway == "0.0.0.0" and cNode.destination.split("/")[1] == 32):
                 #routing table lookup
-                print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface  +") ttl " + str(ttl - 1))
+                print (src + ":" + srcport + "->" + dest + ":" + destport + " directly connected " + "(" + cNode.interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
             else:
                 #this is wrong
                 #arp lookup
-                if (arp.get(dest)):
-                    print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[dest] +") ttl " + str(ttl - 1))
+                if (arp.get(cNode.gateway)):
+                    print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[cNode.gateway] +") ttl " + str(ttl - 1))
                 else:
                     print (src + "->" + dest + " discarded (destination unreachable)")
