@@ -34,29 +34,34 @@ if __name__ == '__main__':
             tempstring = tempstring + binarystring
 
         count = 1
-        for i in tempstring:
-            if(i == '0'):
-                if(cNode.left == None):
-                    cNode.left = Node()
-                    cNode.left.parent = cNode
+        if(depth != 0):
+            for i in tempstring:
+                if(i == '0'):
+                    if(cNode.left == None):
+                        cNode.left = Node()
+                        cNode.left.parent = cNode
 
 
-                cNode = cNode.left
-                
-            else:
-                if(cNode.right == None):
-                    cNode.right = Node()
-                    cNode.right.parent = cNode
+                    cNode = cNode.left
+                    
+                else:
+                    if(cNode.right == None):
+                        cNode.right = Node()
+                        cNode.right.parent = cNode
 
-                cNode = cNode.right
-            if(count == depth):
-                break
-            count = count + 1
+                    cNode = cNode.right
+                if(count == depth):
+                    break
+                count = count + 1
 
-        cNode.destination = val[0]
-        cNode.gateway = val[1]
-        cNode.interface = val[2]
 
+            cNode.destination = val[0]
+            cNode.gateway = val[1]
+            cNode.interface = val[2]
+        else:
+            cNode.destination = val[0]
+            cNode.gateway = val[1]
+            cNode.interface = val[2]
 
     arp = {}
     with open('arp.txt') as arptxt:
@@ -107,11 +112,11 @@ if __name__ == '__main__':
 
 
             if(cNode.gateway == None):
-                print (src + "->" + dest + " discarded (destination unreachable)")
+                #print (src + "->" + dest + " discarded (destination unreachable)")
                 while(cNode.gateway == None):
                     cNode = cNode.parent
 
-                print cNode.destination + "   " + cNode.gateway + "   " + cNode.interface
+                print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + cNode.interface + ") ttl " + str(ttl - 1))
             else:
                 #if direct point to point
                 if (cNode.gateway == "0.0.0.0"):
@@ -122,5 +127,5 @@ if __name__ == '__main__':
                     if (arp.get(cNode.gateway)):
                         print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + "-" + arp[cNode.gateway] +") ttl " + str(ttl - 1))
                     else:
-                         print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + ") ttl " + str(ttl - 1))                    
+                        print (src + ":" + srcport + "->" + dest + ":" + destport + " via " + cNode.gateway + "(" + interface + ") ttl " + str(ttl - 1))                    
 
